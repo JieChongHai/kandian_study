@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>看点资讯</title>
+	<link rel="stylesheet" href="./css/bootstrap-3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="./css/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="./css/bootstrap-switch/bootstrap-switch.min.css">
+
+	<link rel="stylesheet" href="./css/index.css">
+	<link rel="stylesheet" href="./css/user.css">
+	<link rel="stylesheet" href="./css/home.css">
+	<script src="./js/jquery-3.4.1.min.js"></script>
+	<script src="./css/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+	<script src="./css/bootstrap-switch/bootstrap-switch.min.js"></script>
+	<script src="./js/highcharts.js"></script>
+
+	<script src="./js/index.js"></script>
+	<script src="./js/jqAjax.js"></script>
+	<script>
+		$(function(){
+			$('#sidebar').on('click',function(){
+				$('body').toggleClass('silde');
+			})
+		});
+	</script>
+</head>
+<body>
+	<!-- 左边 -->
+	<article class="info-left" id="infoLeft">
+		<header class="info-header">
+			<div>
+				<!-- <img src="./images/logo.png" alt="看点资讯logo"> -->
+				<span>看点资讯后台管理</span>
+			</div>
+		</header>
+		<!-- 右侧菜单栏 -->
+		<nav class="info-content_nav">
+			<div class="user-panel">
+				<div class="pull-left image"><img src="./images/logo.jpg"></div>
+				<div class="pull-left info">
+					<em>康师傅</em>
+				</div>
+			</div>
+			<ul>
+			  <li>
+			  	<i class="fa fa-h-square"></i>
+			  	<span>首页信息</span>
+			  	<i class="fa fa-angle-right"></i>
+			  </li>
+			  <li>
+			  	<i class="fa fa-life-ring"></i>
+			  	<span>栏目管理</span>
+			  	<i class="fa fa-angle-right"></i>
+			  </li>
+			  <li>
+			  	<i class="fa fa-newspaper-o"></i>
+			  	<span>资讯管理</span>
+			  	<i class="fa fa-angle-right"></i>
+			  </li>
+			  <li>
+			  	<i class="fa fa-user-circle-o"></i>
+			  	<span>用户管理</span>
+			  	<i class="fa fa-angle-right"></i>
+			  </li>
+			</ul>
+		</nav>
+	</article>
+	<!-- 右边 -->
+	<article class="info-right" id="infoRight">
+		<header class="info-header">
+			<div class="sidebar" id="sidebar"><i class="fa fa-bars fa-lg"></i></div>
+			<ul class="top-nav">
+				<!-- 消息按钮 -->
+				<li class="news"><i class="fa fa-bell-o fa-lg"></i><span class="newsnum">4</span></li>
+				<!-- 用户按钮 -->
+				<li class="user"><i class="fa fa-user fa-lg"></i>
+				</li>
+			</ul>
+		</header>
+		<article class="info-content_content">
+			
+		</article>
+	</article>
+	<!-- 信息框 -->
+	<div id="info-div">
+		<!-- <div class="alert alert-warning alert-dismissible" role="alert">
+			<i class="fa fa-lg fa-smile-o"></i>&nbsp;&nbsp;您已成功删除!
+		</div> -->
+	</div>
+</body>
+</html>

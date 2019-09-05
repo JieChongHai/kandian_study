@@ -1,0 +1,117 @@
+<!-- 首页 -->
+<div id="home">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-4 item">
+				<div class="item-content">
+					<div class="pull-left">
+						<i class="fa fa-user-o"></i>
+					</div>
+					<div class="info pull-left">
+						<span class="title">会员数</span>
+						<span class="data">0</span>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4 item">
+				<div class="item-content">
+					<div class="pull-left">
+						<i class="fa fa-file-text-o"></i>
+					</div>
+					<div class="info pull-left">
+						<span class="title">栏目数</span>
+						<span class="data">0</span>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4 item">
+				<div class="item-content">
+					<div class="pull-left">
+						<i class="fa fa-comments-o"></i>
+					</div>
+					<div class="info pull-left">
+						<span class="title">文章数</span>
+						<span class="data">0</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div id="tableCount"></div>
+		</div>
+	</div>
+	<script>
+		
+		$(function () {
+			getCount();
+			// 获取后台统计
+			function getCount() {
+				myAjax('GET', '/manager/statistics/getCount', null, function (res) {
+					$('#home .row .item:nth-child(1) .info .data').text(res.data.user);
+					$('#home .row .item:nth-child(2) .info .data').text(res.data.category);
+					$('#home .row .item:nth-child(3) .info .data').text(res.data.article);
+				}, function (error) {
+					console.log(res.data);
+				});
+			}
+			var title = {
+				text: '后台数据统计'
+			};
+			var xAxis = {
+				categories: ['一月', '二月', '三月', '四月', '五月', '六月'
+					, '七月', '八月', '九月', '十月', '十一月', '十二月']
+			};
+			var yAxis = {
+				title: {
+					text: ''
+				},
+				plotLines: [{
+					value: 0,
+					width: 1,
+					color: '#808080'
+				}]
+			};
+
+			var legend = {
+				layout: 'vertical',
+				align: 'right',
+				verticalAlign: 'middle',
+				borderWidth: 0
+			};
+
+			var series = [
+				{
+					name: '会员',
+					data: [7, 12, 15, 20, 26, 30, 32,
+						40, 51, 67, 80, 81]
+				},
+				{
+					name: '栏目',
+					data: [0, 8, 17, 23, 37, 22, 24,
+						41, 52, 50, 46, 25]
+				},
+				{
+					name: '文章',
+					data: [0, 6, 35, 84, 135, 170, 186,
+						179, 143, 90, 39, 10]
+				}
+			];
+			
+			var colors = ['#f8bb74', '#86d2ee', '#94e0e1'];
+			
+			var credits = {enabled:false}
+
+			var json = {};
+
+			json.title = title;
+			json.xAxis = xAxis;
+			json.yAxis = yAxis;
+			json.legend = legend;
+			json.series = series;
+			json.colors = colors;
+			json.credits = credits;
+
+			$('#tableCount').highcharts(json);
+		});
+	</script>
+</div>

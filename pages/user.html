@@ -1,0 +1,453 @@
+<!-- 用户管理 -->
+<div id="user-manage">
+	<div class="row">
+		<div class="col-sm-1">
+			<button class="btn btn-info" id="addBtn">新增用户</button>
+		</div>
+		<div class="col-sm-4">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="按姓名查找" title="查找">
+				<span class="input-group-btn">
+					<button class="btn btn-info" type="button" id="search">点我查找</button>
+				</span>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row" style="margin-top: 10px;" id="users">
+		<!-- 模板 -->
+		<!-- <div class="col-sm-4">
+			<div class="thumbnail">
+				<img class="img-circle" src="../images/logo.jpg" alt=""/>
+				<div class="caption">
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-2">用户编号</div>
+						<div class="col-sm-6">1</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-2">用户昵称</div>
+						<div class="col-sm-6">东方不败</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-2">真实姓名</div>
+						<div class="col-sm-6">东方不败</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-2">注册时间</div>
+						<div class="col-sm-6">东方不败</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-2">邮箱地址</div>
+						<div class="col-sm-6">-</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-2">用户状态</div>
+						<div class="col-sm-6">
+							<input type="hidden" value=""/>
+							<input class="switchBtn" type="checkbox"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-2">用户操作</div>
+						<div class="col-sm-6">
+							<i class="fa fa-pencil-square fa-2x" title="编辑"></i>
+							<i class="fa fa-trash fa-2x" title="删除"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> -->
+
+	</div>
+	<!-- 新增/修改模态框 -->
+	<div class="modal" id="addModal">
+		<div class="modal-dialog">
+			<!-- 内容 -->
+			<div class="modal-content">
+				<!-- 上 -->
+				<div class="modal-header">
+					<span class="modal-title"></span>
+					<button class="btn btn-default close" data-dismiss="modal">&times;</button>
+				</div>
+				<!-- 中 -->
+				<div class="modal-body">
+	
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label for="nickname" class="col-sm-2 control-label">用&nbsp;户&nbsp;名:</label>
+							<div class="col-sm-10">
+								<input type="text" class=" form-control" id="nickname" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="pwd" class="col-sm-2 control-label">&nbsp;密&emsp;码&nbsp;:</label>
+							<div class="col-sm-10">
+								<input type="password" class=" form-control" id="pwd" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="repwd" class="col-sm-2 control-label">重复密码:</label>
+							<div class="col-sm-10">
+								<input type="password" class=" form-control" id="repwd" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="username" class="col-sm-2 control-label">真实姓名:</label>
+							<div class="col-sm-10">
+									<input type="text" class=" form-control" id="username" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="email" class="col-sm-2 control-label">邮箱地址:</label>
+							<div class="col-sm-10">
+								<input type="email" class=" form-control" id="email" required>
+							</div>
+						</div>
+					</form>
+	
+				</div>
+				<!-- 下 -->
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal">取消</button>
+					<button class="btn btn-primary" id="save">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(function(){
+
+			// 进入页面获取用户数据
+			findAllUser();
+
+			// 点击按钮查找用户
+			$('#search').click(function(){
+				var key = $(this).parent().parent().children('input[title=查找]').val();
+				if(key === null){
+					findAllUser();
+				}else{
+					$(this).parent().parent().children('input[title=查找]').val(null);
+					console.log(key);
+					var obj = {username:key};
+					findUserByUsername(obj);
+				}
+				
+
+			});
+
+			// 点击按钮新增用户
+			$('#addBtn').click(function(){
+				$('#nickname').val(null);
+				$('#pwd').val(null);
+				$('#repwd').val(null);
+				$('#username').val(null);
+				$('#email').val(null);
+				$('.modal-title').text('新增用户');
+				$('#addModal').modal('show');
+				// 提交保存
+				$('#save').off("click").on('click',function(){
+					$('#addModal').modal('hide');
+					var nickname = $('#nickname').val();
+					var pwd = $('#pwd').val();
+					var username = $('#username').val();
+					var email = 	$('#email').val();
+					// var regtime = getRegtime();
+					console.log(nickname, pwd, username,email);
+					var obj = {username:username,password:pwd,nickname:nickname,email:email};
+					saveOrUpdateUser(obj);
+				});
+			});
+
+			// 点击按钮编辑用户
+			$('#users').on('click',"i[title='编辑']",function(){
+				console.log('编辑',$(this).attr('data-id'));
+				var id = $(this).attr('data-id');
+				var $parent = $(this).parent().parent().parent().parent().parent().children('.thumbnail').children('.caption');
+				$('.modal-title').text('编辑栏目');
+				$('.form-horizontal .form-group:eq(1) label').text('新 密 码:');
+				$('#addModal').modal('show');
+				$('.modal-body .form-horizontal').children('.form-group:eq(2)').hide();
+				$('#nickname').val($parent.children('.row:eq(1)').children('div:last-child').text());
+				$('#pwd').val(null);
+				$('#username').val($parent.children('.row:eq(2)').children('div:last-child').text());
+				var regTime = $parent.children('.row:eq(3)').children('div:last-child').text();
+				$('#email').val($parent.children('.row:eq(4)').children('div:last-child').text());
+				// 提交保存
+				$('#save').off("click").on('click',function(){
+					$('#addModal').modal('hide');
+					var nickname = $('#nickname').val();
+					var pwd = $('#pwd').val();
+					var username = $('#username').val();
+					var email = $('#email').val();
+					console.log(id,nickname, pwd, username ,email);
+					var obj = {id:id,username:username,password:pwd,nickname:nickname,email:email,regTime:regTime};
+					saveOrUpdateUser(obj);
+				});
+			});
+
+			// 点击按钮删除用户
+			$('#users').on('click',"i[title='删除']",function(){
+				console.log('删除',$(this).attr('data-id'));
+				var id = $(this).attr('data-id');
+				deleteUserById({id:id});
+			});
+
+			// 新增和修改用户
+			function saveOrUpdateUser(obj){
+				myAjax('POST','/manager/user/saveOrUpdateUser',obj,function(res){
+					findAllUser();
+				},function(error){
+					console.log(error);
+				});
+			}
+
+			// 删除用户
+			function deleteUserById(obj){
+				myAjax('GET','/manager/user/deleteUserById',obj,function(res){
+					findAllUser();
+					if(res.status == 200){
+						// 弹出信息框
+						$('#info-div').html(`<div class="alert alert-success alert-dismissible" role="alert">
+							<i class="fa fa-lg fa-smile-o"></i>&nbsp;&nbsp;您已删除成功!
+							</div>`);
+						$('#info-div').animate({right:"10px",opacity:1});
+						setTimeout(function(){
+							$('#info-div').stop().fadeOut(1000,function(){
+								$('#info-div').css({
+									right: "-210px",
+									opacity: 1,
+									display:"block"
+								});
+							});
+						},2000);
+					}else{
+						// 弹出信息框
+						$('#info-div').html(`<div class="alert alert-warning alert-dismissible" role="alert">
+							<i class="fa fa-lg fa-frown-o"></i>&nbsp;&nbsp;对不起,删除失败!
+							</div>`);
+						$('#info-div').animate({right:"10px",opacity:1});
+						setTimeout(function(){
+							$('#info-div').stop().fadeOut(1000,function(){
+								$('#info-div').css({
+									right: "-210px",
+									opacity: 1,
+									display:"block"
+								});
+							});
+						},2000);
+					}
+				},function(error){
+					console.log(error);
+				});
+			}
+
+			// 获取用户数据
+			function findAllUser() {
+				myAjax('GET','/manager/user/findAllUser',null,function(res){
+					console.log(res.data);
+					// 清空数据
+					$('#users').empty();
+					// 添加数据(一个一个追加)
+					res.data.forEach(function(item, index){
+						var $str = $(`<div class="col-sm-4">
+						<div class="thumbnail">
+							<img class="img-circle" src="`+ (item.userface ? item.userface : './images/logo.jpg ') + `"/>
+							<div class="caption">
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户编号</div>
+									<div class="col-sm-6">`+ item.id + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户昵称</div>
+									<div class="col-sm-6">`+ (item.nickname ? item.nickname : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">真实姓名</div>
+									<div class="col-sm-6">`+ (item.username ? item.username : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">注册时间</div>
+									<div class="col-sm-6">`+ (item.regTime ? item.regTime : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">邮箱地址</div>
+									<div class="col-sm-6">`+ (item.email ? item.email : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户状态</div>
+									<div class="col-sm-6">
+										<input class="switchBtn" type="checkbox" value="`+ item.id + `"/>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户操作</div>
+									<div class="col-sm-6">
+										<i class="fa fa-pencil-square fa-lg" title="编辑" data-id="`+ item.id + `"></i>
+										<i class="fa fa-trash fa-lg" title="删除" data-id="`+ item.id + `"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>`);
+					$str.appendTo('#users');
+					// 给用户状态switch设置样式
+					$('#users input.switchBtn').bootstrapSwitch({
+						state: item.enabled,
+						onText: "开启",	
+						offText: "关闭",  
+						onColor: "success",
+						offColor: "info",
+						size: "small",
+						handleWidth: "28",
+					});
+					});
+				},function(error){
+					console.log(error);
+				});
+			}
+
+			// 代理绑定switch状态切换事件
+			$('#users').on({
+				'switchChange.bootstrapSwitch':function(e,state){
+					console.log(e.target.value,state);
+					var id = e.target.value;
+					var obj = {id:id,status:state}
+					changeStatus(obj);
+				}// 这是一个事件对象
+			},'input.switchBtn');
+
+			// 改变用户状态
+			function changeStatus(obj){
+				myAjax('POST','/manager/user/changeStatus',obj,function(res){
+					// findAllUser();
+				},function(error){
+					console.log(error);
+				});
+			}
+
+			// 查找用户
+			function findUserByUsername(obj){
+				myAjax('GET','/manager/user/findUserByUsername',obj,function(res){
+					console.log(res.data);
+					// 清空数据
+					$('#users').empty();
+					if(res.data&&(res.status == 200)){
+						// 显示数据
+						var item = res.data;
+						var $str = $(`<div class="col-sm-4">
+						<div class="thumbnail">
+							<img class="img-circle" src="`+ (item.userface ? item.userface : './images/logo.jpg ') + `"/>
+							<div class="caption">
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户编号</div>
+									<div class="col-sm-6">`+ item.id + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户昵称</div>
+									<div class="col-sm-6">`+ (item.nickname ? item.nickname : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">真实姓名</div>
+									<div class="col-sm-6">`+ (item.username ? item.username : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">注册时间</div>
+									<div class="col-sm-6">`+ (item.regTime ? item.regTime : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">邮箱地址</div>
+									<div class="col-sm-6">`+ (item.email ? item.email : '-') + `</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户状态</div>
+									<div class="col-sm-6">
+										<input class="switchBtn" type="checkbox" value="`+ item.id + `"/>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-2">用户操作</div>
+									<div class="col-sm-6">
+										<i class="fa fa-pencil-square fa-lg" title="编辑" data-id="`+ item.id + `"></i>
+										<i class="fa fa-trash fa-lg" title="删除" data-id="`+ item.id + `"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						</div>`);
+						$str.appendTo('#users');
+						// 给用户状态switch设置样式
+						$('#users input.switchBtn').bootstrapSwitch({
+							state: item.enabled,
+							onText: "开启",	
+							offText: "关闭",  
+							onColor: "success",
+							offColor: "info",
+							size: "small",
+							handleWidth: "28",
+						});
+					}else{
+						// 弹出信息框
+						$('#info-div').html(`<div class="alert alert-danger alert-dismissible" role="alert">
+							<i class="fa fa-lg fa-frown-o"></i>&nbsp;&nbsp;对不起,查找失败!
+							</div>`);
+						$('#info-div').animate({right:"10px",opacity:1});
+						setTimeout(function(){
+							$('#info-div').stop().fadeOut(1000,function(){
+								$('#info-div').css({
+									right: "-210px",
+									opacity: 1,
+									display:"block"
+								});
+							});
+						},2000);
+					}
+				},function(error){
+					console.log(error);
+				});
+			}
+
+			// 得到注册时间
+			// function getRegtime(){   
+			// 	var today = new Date(); 
+			// 	var yyyy = today.getFullYear();  
+			// 	var MM = today.getMonth()+1; 
+			// 	var dd = today.getDate();
+			// 	var hh = today.getHours(); 
+			// 	var mm = today.getMinutes(); 
+			// 	var ss = today.getSeconds();  
+			// 	MM = MM<10?'0'+MM:MM;
+			// 	dd = dd<10?'0'+dd:dd;
+			// 	mm = mm<10?'0'+mm:mm;
+			// 	ss = ss<10?'0'+ss:ss;
+			// 	var today = yyyy+"-"+MM +"-"+dd+" "+hh+":"+mm+":"+ss;
+			// 	return today;
+			// }
+			
+		});
+
+
+
+
+		// bootstrap开关控件，初始化
+		// $(function () {
+		// 	/* 初始化控件 */
+		// 	$(".switchBtn").bootstrapSwitch({
+		// 		onText: "ON",      	// 设置ON文本  
+		// 		offText: "OFF",    	// 设置OFF文本  
+		// 		onColor: "success",	// 设置ON文本颜色(info/success/warning/danger/primary)  
+		// 		offColor: "info",  	// 设置OFF文本颜色(info/success/warning/danger/primary)  
+		// 		size: "small",			// 设置控件大小(mini/small/normal/large)  
+		// 		handleWidth: "28",	// 设置控件宽度
+		// 		// 当开关状态改变时触发  
+		// 		onSwitchChange: function (e, state) {
+		// 			if (state == true) {
+		// 				console.log(e.target);
+		// 			} else {
+		// 				console.log(e.target);
+		// 			}
+		// 		}
+		// 	});
+		// });
+	</script>
+</div>
